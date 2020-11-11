@@ -11,6 +11,8 @@ var leaderRouter = require('./routes/leaderRouter');
 const mongoose = require('mongoose');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
+var passport = require('passport');
+var authenticate = require('./routes/authenticate');
 var app = express();
 
 
@@ -32,6 +34,22 @@ connect.then((db) => {
 	app.use('/', indexRouter);
 	app.use('/users', usersRouter);
 
+	app.use(passport.initialize());
+	app.use(passport.session());
+
+	function authPassport(req, res, next) {
+		console.log(req.user);
+
+		if (!req.user) {
+			var err = new Error('You are not authenticated!');
+			err.status = 403;
+			next(err);
+		}
+		else {
+			next();
+		}
+	}
+
 	function auth(req, res, next) {
 		console.log(req.session);
 
@@ -52,8 +70,8 @@ connect.then((db) => {
 		}
 	}
 
-	app.use(auth);
-	app.set('view engine', 'jade');
+	//app.use(auth);
+	app.use(authPassport)
 	app.use(logger('dev'));
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: false }));
