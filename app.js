@@ -13,10 +13,10 @@ var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 var passport = require('passport');
 var authenticate = require('./routes/authenticate');
+var config = require('./config');
 var app = express();
 
-
-const url = 'mongodb://localhost:27017/coursera';
+const url = config.mongoUrl;
 const connect = mongoose.connect(url);
 
 connect.then((db) => {
@@ -30,12 +30,12 @@ connect.then((db) => {
 		resave: false,
 		store: new FileStore()
 	}));
+	app.use(passport.initialize());
+	app.use(passport.session());
 	/* so the user cnt access any route without auth he can only auth to */
 	app.use('/', indexRouter);
 	app.use('/users', usersRouter);
 
-	app.use(passport.initialize());
-	app.use(passport.session());
 
 	function authPassport(req, res, next) {
 		console.log(req.user);
@@ -72,6 +72,7 @@ connect.then((db) => {
 
 	//app.use(auth);
 	app.use(authPassport)
+	app.set('view engine', 'jade');
 	app.use(logger('dev'));
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: false }));
