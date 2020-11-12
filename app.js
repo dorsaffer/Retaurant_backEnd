@@ -14,6 +14,7 @@ var FileStore = require('session-file-store')(session);
 var passport = require('passport');
 var authenticate = require('./routes/authenticate');
 var config = require('./config');
+const uploadRouter = require('./routes/uploadRouter');
 var app = express();
 
 const url = config.mongoUrl;
@@ -82,6 +83,8 @@ connect.then((db) => {
 	app.use('/dishes', dishRouter);
 	app.use('/promotions', promoRouter);
 	app.use('/leaders', leaderRouter);
+	app.use('/imageUpload', uploadRouter);
+
 
 	// catch 404 and forward to error handler
 	app.use(function (req, res, next) {
