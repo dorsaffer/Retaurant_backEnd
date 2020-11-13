@@ -12,7 +12,7 @@ const mongoose = require('mongoose');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 var passport = require('passport');
-var authenticate = require('./routes/authenticate');
+var favoritesRouter = require('./routes/favorites');
 var config = require('./config');
 const uploadRouter = require('./routes/uploadRouter');
 var app = express();
@@ -84,7 +84,7 @@ connect.then((db) => {
 	app.use('/promotions', promoRouter);
 	app.use('/leaders', leaderRouter);
 	app.use('/imageUpload', uploadRouter);
-
+	app.use('/favorites', favoritesRouter);
 
 	// catch 404 and forward to error handler
 	app.use(function (req, res, next) {
